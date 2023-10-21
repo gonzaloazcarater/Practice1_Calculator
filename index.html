@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculadora</title>
+  <meta charset="utf-8">
+  <style>
+    #pantalla {
+      background-color:black;
+      color: white;
+    }
+    #calculadora {
+      background-color:slategrey;
+    }
+    #info {
+      color: turquoise;
+    }
+  </style>
+  <script type="text/javascript">
+  // PANTALLA
+    const numero = () => {
+      return Number(document.getElementById("pantalla").value);
+    }
+    const vaciar = () => {
+      rellenar("");
+    }
+    const rellenar = (v) => {
+      document.getElementById("pantalla").value= v;
+    // lo que pongas dentro de rellenar se vera en la pantalla.
+    }
+    const numeros = () => {
+      return document.getElementById("pantalla").value.split(",").map(Number);
+    }
+// VALIDAR  
+    const validar = () => {
+      if (Number.isNaN(numero())) {
+        rellenar ("Error");
+        rellenar_info();
+        return false;
+      }
+      else {
+      return true;
+      }
+    }
+    const validarCSV = () => {
+      if (numeros().some(Number.isNaN)){
+        rellenar("Error");
+        rellenar_info();
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+// INFO
+    const rellenar_info = () => {
+      // nos dice en todas las funciones si el numero es mayor o menor .....
+      let n = numero();
+      let msg = "";
+      if (Number.isNaN(n)) {
+        msg="No es un número";
+      }
+      else{
+        if (n<100){
+          msg = "Info: El resultado es menor que 100";
+      }
+        else if (n>200) {
+          msg = "Info: El resultado es superior a 200";
+      }
+      else {
+          msg = "Info: El resultado está entre 100 y 200";
+      }
+    }
+      document.getElementById("info").innerHTML = "<p>" + msg + "</p>";
+    }
+
+    // OPERACIONES UNITARIOS
+    const cuadrado = () => {
+      if (!validar()) return;
+      let num = numero();
+      rellenar(num*num);
+      rellenar_info();
+    }
+    const mod = () =>{
+      if (!validar()) return;
+      let num = numero();
+      rellenar(Math.abs(num));
+      rellenar_info();
+    }
+    const fact= () =>{
+      if (!validar()) return;
+      let num=numero();
+      let res=1;
+      for (let i=num;i>1;i--){
+        res*=i;
+      }
+    rellenar(res);
+    rellenar_info();
+    }
+    // OPERACIONES BINARIAS
+    let acumulador =0;
+    let operador="";
+    const acumula = (n) => {
+        switch(operador) {
+          case "":
+            acumulador = n;
+            break;
+          case "+":
+            acumulador += n;
+            break;
+            case "-":
+            acumulador -= n;
+            break;
+          case "*":
+            acumulador *= n;
+            break;
+            case "/":
+            acumulador /= n;
+            break;
+        }
+      }
+    const add = () =>{
+      if (!validar()) return;
+      acumula(numero());
+      operador= "+";
+      vaciar();
+      rellenar_info();
+    }
+    const subs = () =>{
+      if (!validar()) return;
+      acumula(numero());
+      operador= "-";
+      vaciar();
+      rellenar_info();
+    }
+    const mul = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador = "*";
+      vaciar();
+      rellenar_info();
+    }
+    const eq = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador = "";
+      rellenar(acumulador);
+      rellenar_info();
+    }
+    const divi = () =>{
+      if (!validar()) return;
+      acumula(numero());
+      operador= "/";
+      vaciar();
+      rellenar_info();
+    }
+
+    // OPERACIONES CSV
+    const sumatorio =() => {
+      if (!validarCSV()) return;
+      let array= numeros();
+      let res = 0;
+      for (let i=array.length-1;i>=0;i--){
+        res+=array[i];
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+    const ordenar =() => {
+      if (!validarCSV()) return;
+      let array=numeros();
+      res=array.sort((a, b) => a - b);
+      rellenar(res);
+      rellenar_info();
+    }
+    const revertir =() => {      if (!validarCSV()) return;
+    let array =numeros();
+    let res = [];
+    for (let i = array.length-1;i>=0;i--){
+      res[i]=array[array.length-1-i];
+      }
+     rellenar(res);
+     rellenar_info(); 
+    }
+    const quitar =() => {
+      if (!validarCSV()) return;
+      let array=numeros();
+      let res = [];
+      for (let i = array.length-2;i>=0;i--){
+        res[i]=array[i];
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+  </script>
+</head>
+<body>
+  <div id="calculadora">
+  <h1 id="titulo">Calculadora de Core</h1>
+    Número:
+  <input type="text" id="pantalla" onclick="vaciar()">
+  <h2 id="info" class="grande" title="Info sobre el número">Info sobre el número</h2>
+  <h3 id="operaciones unitarias">Operaciones unitarias</h3>
+  <button id="cuadrado" onclick="cuadrado()">x<sup>2</sup></button>
+  <button id="modulo" onclick="mod()">abs</button>
+  <button id="factorial" onclick="fact()">x!</button>
+  
+  <h3 id="operaciones BINARIAS">Operaciones binarias</h3>
+  <button id="suma" onclick="add()">+</button>
+  <button id="resta" onclick="subs()">-</button>
+  <button id="multiplicacion" onclick="mul()">*</button>
+  <button id="división" onclick="divi()">/</button>
+  <button id="igual" onclick="eq()">=</button>
+  
+  <h3 id="operaciones CSV">Operaciones en formato CSV</h3>
+  <button id="sumatorio"onclick="sumatorio()">Σx</button>
+  <button id="ordenar" onclick="ordenar()">ordenar</button>
+  <button id="revertir" onclick="revertir()">revertir</button>
+  <button id="quitar" onclick="quitar()">quitar</button>
+</div>
+ </body>
+</html>
